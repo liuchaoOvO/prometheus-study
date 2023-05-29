@@ -72,4 +72,21 @@ ipconfig 查看ip 地址。 因为是docker 容器部署 ip不能直接用127.0.
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/f27b26fd-47b5-41ed-977c-a2f8e375664c)
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/b6f864f5-3ba5-47e9-bded-5855a3b5c63b)
 
+---
+# 导入dashboard展示
 
+1、grafana官网dashboards地址：
+https://grafana.com/grafana/dashboards
+
+下载了一个 node_exporter 的图形模板：
+ 
+https://grafana.com/grafana/dashboards/8919
+ 
+点击Load，就可以下载Node Exporter的dashboard。
+选择Folder，选择Prometheus数据源，Import。
+
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/58bac769-1a55-4bdc-9e43-dedf0f3b4459)
+
+
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/4815b0d4-a9f4-4dcc-ae12-b60c1b68a84a)
+后续 可以配置导入 node_exporter 采集的指标数据和 dashboard 规则信息。展示出来
