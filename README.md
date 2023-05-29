@@ -62,3 +62,14 @@ scrape_configs:
 ## 利用 docker ps 查看启动情况
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/56657f28-d7fb-430e-ad21-a9b2327ac9db)
 
+---
+# grafana 配置 prometheus 数据源
+
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/0946048e-e28c-42fa-b502-1762f6f2f512)
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/4e1bda2a-00dd-4f7f-8f9a-ccc9f4fa7843)
+
+ipconfig 查看ip 地址。 因为是docker 容器部署 ip不能直接用127.0.0.1 参考：https://www.cnblogs.com/youxin/p/16212618.html
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/f27b26fd-47b5-41ed-977c-a2f8e375664c)
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/b6f864f5-3ba5-47e9-bded-5855a3b5c63b)
+
+
