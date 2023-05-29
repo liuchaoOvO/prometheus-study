@@ -26,3 +26,12 @@ scrape_configs:
 样式：
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/2654cc5f-f25e-4837-b34e-2879f99d19fb)
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/889d18be-9088-45c9-96cc-410029f390c4)
+
+访问：http://127.0.0.1:9090/graph
+如下图 证明启动成功
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/577d0fdb-d964-4079-929a-f5187c3624c8)
+访问：http://127.0.0.1:9090/targets
+查看当前采集的target信息
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/529e0262-ae7f-4f01-a3e5-2d0c7beb6aa0)
+
+
