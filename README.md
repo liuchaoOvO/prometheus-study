@@ -85,6 +85,8 @@ prom/node-exporter
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/9453944b-b488-4577-beef-97aa768326ef)
 
 3、编辑prometheus配置文件，用于后续启动prometheus指定配置文件
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/0134a2f5-39c6-4fdc-b3ab-12ac4bf3f037)
+
 ```
 global:
   scrape_interval:     60s
@@ -93,20 +95,20 @@ global:
 scrape_configs:
   - job_name: prometheus
     static_configs:
-      - targets: ['localhost:9090']
+      - targets: ['192.168.1.101:9090']
         labels:
           instance: prometheus
   - job_name: node
     static_configs:
-      - targets: ['localhost:9100']
+      - targets: ['192.168.1.101:9100']
         labels:
           instance: node
 ```
-关闭当时启动的myprometheus pod 
+关闭当时启动的myprometheus pod <br/>
 `docker stop myprometheus`
-删除myprometheus container
+删除myprometheus container<br/>
 `docker rm myprometheus`
-重启myprometheus pod 
+重启myprometheus pod <br/>
 `docker run  -d --name myprometheus --restart=always -p 9090:9090 -v /d/k8s/prometheus/opt/prometheus/prometheus.yml prom/prometheus`
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/09daf9f7-f8b7-49d9-a7c3-75fb213b3765)
 
