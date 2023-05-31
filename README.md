@@ -22,7 +22,10 @@ scrape_configs:
 ```
 ## 二、启动prometheus docker 命令
 
- `docker run  -d --name myprometheus --restart=always -p 9090:9090 -v /d/k8s/prometheus/opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus`
+ `docker run  -d --name myprometheus --restart=always -p 9090:9090 -v /d/k8s/prometheus/opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus` <br/>
+ 
+docker windows下挂载目录和文件 参考文档： https://www.yii666.com/article/646638.html <br/>
+  `docker run -v d:\k8s\prometheus\opt\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml -d --name myprometheus --restart=always -p 9090:9090 prom/prometheus` <br/>
 
 
 样式：
@@ -105,13 +108,15 @@ scrape_configs:
           instance: node
 ```
 关闭当时启动的myprometheus pod <br/>
-`docker stop myprometheus`
+`docker stop myprometheus` <br/>
 删除myprometheus container<br/>
-`docker rm myprometheus`
+`docker rm myprometheus` <br/>
 重启myprometheus pod <br/>
-`docker run  -d --name myprometheus --restart=always -p 9090:9090 -v /d/k8s/prometheus/opt/prometheus/prometheus.yml prom/prometheus`
+docker windows下挂载目录和文件 参考文档： https://www.yii666.com/article/646638.html <br/>
+  `docker run -v d:\k8s\prometheus\opt\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml -d --name myprometheus --restart=always -p 9090:9090 prom/prometheus` <br/>
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/09daf9f7-f8b7-49d9-a7c3-75fb213b3765)
 
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/bd73af04-6d9e-4a45-af1d-ef9fb1c20f73)
 
 
 ---
@@ -132,3 +137,7 @@ https://grafana.com/grafana/dashboards/8919
 
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/4815b0d4-a9f4-4dcc-ae12-b60c1b68a84a)
 后续 可以配置导入 node_exporter 采集的指标数据和 dashboard 规则信息。展示出来
+
+访问：http://127.0.0.1:3000/ 的采集到的node exporter 信息在 grafana 展示的效果如下图：
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/2e94098d-2460-4cdd-98a8-1b733b0d04c5)
+
