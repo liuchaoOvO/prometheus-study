@@ -72,6 +72,46 @@ ipconfig 查看ip 地址。 因为是docker 容器部署 ip不能直接用127.0.
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/f27b26fd-47b5-41ed-977c-a2f8e375664c)
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/b6f864f5-3ba5-47e9-bded-5855a3b5c63b)
 
+
+---
+# docker 配置 node-exporter 采集node 指标信息
+1. 拉取镜像
+`docker pull prom/node-exporter`
+2. 启动node-exporter
+```
+docker run -d --name mynode-exporter -p 9100:9100 \
+prom/node-exporter 
+```
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/9453944b-b488-4577-beef-97aa768326ef)
+
+3、编辑prometheus配置文件，用于后续启动prometheus指定配置文件
+```
+global:
+  scrape_interval:     60s
+  evaluation_interval: 60s
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          instance: prometheus
+  - job_name: node
+    static_configs:
+      - targets: ['localhost:9100']
+        labels:
+          instance: node
+```
+关闭当时启动的myprometheus pod 
+`docker stop myprometheus`
+删除myprometheus container
+`docker rm myprometheus`
+重启myprometheus pod 
+`docker run  -d --name myprometheus --restart=always -p 9090:9090 -v /d/k8s/prometheus/opt/prometheus/prometheus.yml prom/prometheus`
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/09daf9f7-f8b7-49d9-a7c3-75fb213b3765)
+
+
+
 ---
 # 导入dashboard展示
 
