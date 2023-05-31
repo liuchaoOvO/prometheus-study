@@ -22,7 +22,7 @@ scrape_configs:
 ```
 ## 二、启动prometheus docker 命令
 
- `docker run  -d --name myprometheus --restart=always -p 9090:9090 -v /d/k8s/prometheus/opt/prometheus/prometheus.yml prom/prometheus`
+ `docker run  -d --name myprometheus --restart=always -p 9090:9090 -v /d/k8s/prometheus/opt/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus`
 
 
 样式：
