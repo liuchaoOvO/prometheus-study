@@ -120,6 +120,60 @@ docker windows下挂载目录和文件 参考文档： https://www.yii666.com/ar
 
 
 ---
+# 配置Alertmanager
+
+## 拉取Alertmanager最新镜像 docker 命令
+`docker pull prom/alertmanager`<br/>
+## 启动Alertmanager docker 命令
+```
+docker run -v d:\k8s\prometheus\opt\alertmanager:/etc/alertmanager -d -p 9093:9093 --name myalertmanager --restart=always prom/alertmanager
+```
+<br/>
+## /etc/alertmanager/alertmanager.yml 命令
+
+alertmanager.yml 文件内容
+
+```
+# 全局配置项
+global:
+  resolve_timeout: 5m #超时,默认5min
+  #邮箱smtp服务
+  smtp_smarthost: 'smtp.qq.com:465'
+  smtp_from: '11111111@qq.com'
+  smtp_auth_username: '11111111@qq.com'
+  smtp_auth_password: '123456'
+  smtp_require_tls: false
+
+# 定义模板信息
+templates:
+  - 'template/*.tmpl'   # 路径
+
+# 路由
+route:
+  group_by: ['alertname'] # 报警分组依据
+  group_wait: 10s #组等待时间
+  group_interval: 10s # 发送前等待时间
+  repeat_interval: 1h #重复周期
+  receiver: 'mail' # 默认警报接收者
+
+# 警报接收者
+receivers:
+- name: 'mail' #警报名称
+  email_configs:
+  - to: '{{ template "email.to" . }}'  #接收警报的email
+    html: '{{ template "email.to.html" . }}' # 模板
+    send_resolved: true
+
+# 告警抑制
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+```
+
+---
 # 导入dashboard展示
 
 1、grafana官网dashboards地址：
