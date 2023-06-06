@@ -131,11 +131,10 @@ windows 系统下 利用原生终端 执行如下命令
 docker run -v d:\k8s\prometheus\opt\alertmanager:/etc/alertmanager -d -p 9093:9093 --name myalertmanager --restart=always prom/alertmanager
 ```
 <br/>
-![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/8524b4c3-89d4-4acd-a5f9-c5ac31f9a972)
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/ff0a0e99-cef2-4bfc-87ab-3fa2badc0a6e)
 
-## /etc/alertmanager/alertmanager.yml 命令
 
-alertmanager.yml 文件内容
+## /etc/alertmanager/alertmanager.yml alertmanager.yml 文件内容 如下
 
 ```
 # 全局配置项
@@ -200,8 +199,8 @@ scrape_configs:
         labels:
           instance: node      
 ```
-## 编写rules.yml配置文件
-在d:\k8s\prometheus\opt\prometheus\rules.yml 编写
+## 编写rules.yml配置文件   在d:\k8s\prometheus\opt\prometheus\rules.yml 编写
+
 ```
 groups:
   - name: Warning
@@ -262,17 +261,12 @@ groups:
 ```
 
 **注意：映射挂载的路径要跟prometheus.yml中的rule_files的配置的路径一样**
-docker windows下挂载目录和文件 参考文档： https://www.yii666.com/article/646638.html <br/>
-  `docker run -v d:\k8s\prometheus\opt\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml -v d:\k8s\prometheus\opt\prometheus\rules.yml:/etc/prometheus/rules.yml -d --name myprometheus --restart=always -p 9090:9090 prom/prometheus` 
-  
-  <br/>
- 关闭当时启动的myprometheus pod <br/>
+*docker windows下挂载目录和文件 参考文档： https://www.yii666.com/article/646638.html <br/>*
+  `docker run -v d:\k8s\prometheus\opt\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml -v d:\k8s\prometheus\opt\prometheus\rules.yml:/etc/prometheus/rules.yml -d --name myprometheus --restart=always -p 9090:9090 prom/prometheus` <br/>
+关闭当时启动的myprometheus pod <br/>
 `docker stop myprometheus` <br/>
 删除myprometheus container<br/>
 `docker rm myprometheus` <br/>
-
-
-   
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/a61bf556-e755-4af6-8a3f-d80e511c99d5)
 重启myprometheus pod <br/>
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/3fb0dc78-df02-4932-8313-09eb6fd087f2)
@@ -281,11 +275,8 @@ docker windows下挂载目录和文件 参考文档： https://www.yii666.com/ar
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/a39052ab-3fef-4690-9593-fdd1145b213b)
 * 访问ip:9093 如 http://192.168.1.101:9093/#/alerts
 * ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/2545c404-fa9a-4757-9f8e-a023a3ecffb6)
-
 * 访问ip:9093 如 http://192.168.1.101:9093/#/status
 * ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/f493c4e1-2462-4762-8aec-79b92c7fd529)
-
-
 * 访问ip:9090 如  http://127.0.0.1:9090/alerts
 * ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/a1d9eae3-fa6b-47d6-9eaf-9f1f90247ea5)
 * 访问ip:9090 如  http://127.0.0.1:9090/rules
