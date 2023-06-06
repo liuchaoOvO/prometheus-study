@@ -3,13 +3,13 @@
 prometheus 学习 资料记录
 
 
-
 ## 一、启动prometheus
 *1.先创建映射目录* <br/>
 mkdir -p /d/k8s/prometheus/opt/prometheus<br/>
 *2.配置prometheus.yml* <br/>
 vim prometheus.yml
-```global:
+```
+global:
   scrape_interval:     20s
   evaluation_interval: 20s
 
@@ -125,10 +125,14 @@ docker windows下挂载目录和文件 参考文档： https://www.yii666.com/ar
 ## 拉取Alertmanager最新镜像 docker 命令
 `docker pull prom/alertmanager`<br/>
 ## 启动Alertmanager docker 命令
+docker windows下挂载目录和文件 参考文档： https://www.yii666.com/article/646638.html <br/>
+windows 系统下 利用原生终端 执行如下命令
 ```
 docker run -v d:\k8s\prometheus\opt\alertmanager:/etc/alertmanager -d -p 9093:9093 --name myalertmanager --restart=always prom/alertmanager
 ```
 <br/>
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/8524b4c3-89d4-4acd-a5f9-c5ac31f9a972)
+
 ## /etc/alertmanager/alertmanager.yml 命令
 
 alertmanager.yml 文件内容
@@ -172,6 +176,120 @@ inhibit_rules:
       severity: 'warning'
     equal: ['alertname', 'dev', 'instance']
 ```
+## 编写prometheus.yml配置文件 增加对alertmanager的配置
+```
+global:
+  scrape_interval:     60s
+  evaluation_interval: 60s
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ["192.168.1.101:9093"]
+rule_files:
+  - /etc/prometheus/rules.yml
+  
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: ['192.168.1.101:9090']
+        labels:
+          instance: prometheus
+  - job_name: node
+    static_configs:
+      - targets: ['192.168.1.101:9100']
+        labels:
+          instance: node      
+```
+## 编写rules.yml配置文件
+在d:\k8s\prometheus\opt\prometheus\rules.yml 编写
+```
+groups:
+  - name: Warning
+    rules:
+      - alert: NodeMemoryUsage
+        expr: 100 - (node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes) / node_memory_MemTotal_bytes*100 > 80
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: 内存使用率过高"
+          description: "{{$labels.instance}}: 内存使用率大于 80% (当前值: {{ $value }}"
+
+      - alert: NodeCpuUsage
+        expr: (1-((sum(increase(node_cpu_seconds_total{mode="idle"}[1m])) by (instance)) / (sum(increase(node_cpu_seconds_total[1m])) by (instance)))) * 100 > 70
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: CPU使用率过高"
+          description: "{{$labels.instance}}: CPU使用率大于 70% (当前值: {{ $value }}"
+
+      - alert: NodeDiskUsage
+        expr: 100 - node_filesystem_free_bytes{fstype=~"xfs|ext4"} / node_filesystem_size_bytes{fstype=~"xfs|ext4"} * 100 > 80
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: 分区使用率过高"
+          description: "{{$labels.instance}}: 分区使用大于 80% (当前值: {{ $value }}"
+
+      - alert: Node-UP
+        expr: up{job='node-exporter'} == 0
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: 服务宕机"
+          description: "{{$labels.instance}}: 服务中断超过1分钟"
+
+      - alert: TCP
+        expr: node_netstat_Tcp_CurrEstab > 1000
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: TCP连接过高"
+          description: "{{$labels.instance}}: 连接大于1000 (当前值: {{$value}})"
+
+      - alert: IO
+        expr: 100 - (avg(irate(node_disk_io_time_seconds_total[1m])) by(instance)* 100) < 60
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: 流入磁盘IO使用率过高"
+          description: "{{$labels.instance}}:流入磁盘IO大于60%  (当前值:{{$value}})"
+```
+
+**注意：映射挂载的路径要跟prometheus.yml中的rule_files的配置的路径一样**
+docker windows下挂载目录和文件 参考文档： https://www.yii666.com/article/646638.html <br/>
+  `docker run -v d:\k8s\prometheus\opt\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml -v d:\k8s\prometheus\opt\prometheus\rules.yml:/etc/prometheus/rules.yml -d --name myprometheus --restart=always -p 9090:9090 prom/prometheus` 
+  
+  <br/>
+ 关闭当时启动的myprometheus pod <br/>
+`docker stop myprometheus` <br/>
+删除myprometheus container<br/>
+`docker rm myprometheus` <br/>
+
+
+   
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/a61bf556-e755-4af6-8a3f-d80e511c99d5)
+重启myprometheus pod <br/>
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/3fb0dc78-df02-4932-8313-09eb6fd087f2)
+
+*docker ps -a 查看启动后的情况*
+![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/a39052ab-3fef-4690-9593-fdd1145b213b)
+* 访问ip:9093 如 http://192.168.1.101:9093/#/alerts
+* ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/2545c404-fa9a-4757-9f8e-a023a3ecffb6)
+
+* 访问ip:9093 如 http://192.168.1.101:9093/#/status
+* ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/f493c4e1-2462-4762-8aec-79b92c7fd529)
+
+
+* 访问ip:9090 如  http://127.0.0.1:9090/alerts
+* ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/a1d9eae3-fa6b-47d6-9eaf-9f1f90247ea5)
+* 访问ip:9090 如  http://127.0.0.1:9090/rules
+* ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/ff11907a-66ab-4af2-a802-022d1a21246c)
 
 ---
 # 导入dashboard展示
