@@ -1,0 +1,56 @@
+groups:
+  - name: Warning
+    rules:
+      - alert: NodeMemoryUsage
+        expr: 100 - (node_memory_MemFree_bytes + node_memory_Cached_bytes + node_memory_Buffers_bytes) / node_memory_MemTotal_bytes*100 > 80
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: 内存使用率过高"
+          description: "{{$labels.instance}}: 内存使用率大于 80% (当前值: {{ $value }}"
+
+      - alert: NodeCpuUsage
+        expr: (1-((sum(increase(node_cpu_seconds_total{mode="idle"}[1m])) by (instance)) / (sum(increase(node_cpu_seconds_total[1m])) by (instance)))) * 100 > 70
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: CPU使用率过高"
+          description: "{{$labels.instance}}: CPU使用率大于 70% (当前值: {{ $value }}"
+
+      - alert: NodeDiskUsage
+        expr: 100 - node_filesystem_free_bytes{fstype=~"xfs|ext4"} / node_filesystem_size_bytes{fstype=~"xfs|ext4"} * 100 > 80
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: 分区使用率过高"
+          description: "{{$labels.instance}}: 分区使用大于 80% (当前值: {{ $value }}"
+
+      - alert: Node-UP
+        expr: up{job='node-exporter'} == 0
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: 服务宕机"
+          description: "{{$labels.instance}}: 服务中断超过1分钟"
+
+      - alert: TCP
+        expr: node_netstat_Tcp_CurrEstab > 1000
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: TCP连接过高"
+          description: "{{$labels.instance}}: 连接大于1000 (当前值: {{$value}})"
+
+      - alert: IO
+        expr: 100 - (avg(irate(node_disk_io_time_seconds_total[1m])) by(instance)* 100) < 60
+        for: 1m
+        labels:
+          status: Warning
+        annotations:
+          summary: "{{$labels.instance}}: 流入磁盘IO使用率过高"
+          description: "{{$labels.instance}}:流入磁盘IO大于60%  (当前值:{{$value}})"
