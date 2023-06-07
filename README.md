@@ -72,7 +72,7 @@ docker windows下挂载目录和文件 参考文档： https://www.yii666.com/ar
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/4e1bda2a-00dd-4f7f-8f9a-ccc9f4fa7843)
 
 ipconfig 查看ip 地址。 因为是docker 容器部署 ip不能直接用127.0.0.1 参考：https://www.cnblogs.com/youxin/p/16212618.html
-![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/f27b26fd-47b5-41ed-977c-a2f8e375664c)
+
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/b6f864f5-3ba5-47e9-bded-5855a3b5c63b)
 
 
@@ -88,7 +88,7 @@ prom/node-exporter
 ![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/9453944b-b488-4577-beef-97aa768326ef)
 
 3、编辑prometheus配置文件，用于后续启动prometheus指定配置文件
-![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/0134a2f5-39c6-4fdc-b3ab-12ac4bf3f037)
+
 
 ```
 global:
@@ -131,7 +131,7 @@ windows 系统下 利用原生终端 执行如下命令
 docker run -v d:\k8s\prometheus\opt\alertmanager:/etc/alertmanager -d -p 9093:9093 --name myalertmanager --restart=always prom/alertmanager
 ```
 <br/>
-![image](https://github.com/liuchaoOvO/prometheus-study/assets/34876517/ff0a0e99-cef2-4bfc-87ab-3fa2badc0a6e)
+
 
 
 ## /etc/alertmanager/alertmanager.yml alertmanager.yml 文件内容 如下
@@ -260,7 +260,7 @@ groups:
           description: "{{$labels.instance}}:流入磁盘IO大于60%  (当前值:{{$value}})"
 ```
 
-**注意：映射挂载的路径要跟prometheus.yml中的rule_files的配置的路径一样**
+**注意：映射挂载的路径要跟prometheus.yml中的rule_files的配置的路径一样** <br/>
 *docker windows下挂载目录和文件 参考文档： https://www.yii666.com/article/646638.html <br/>*
   `docker run -v d:\k8s\prometheus\opt\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml -v d:\k8s\prometheus\opt\prometheus\rules.yml:/etc/prometheus/rules.yml -d --name myprometheus --restart=always -p 9090:9090 prom/prometheus` <br/>
 关闭当时启动的myprometheus pod <br/>
